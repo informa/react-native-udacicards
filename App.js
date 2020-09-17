@@ -1,21 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import TabNavigation from "./components/TabNavigation";
+import DeckScreen from "./components/DeckScreen";
+import NewCardScreen from "./components/NewCardScreen";
+import QuizScreen from "./components/QuizScreen";
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <SafeAreaView style={{ flex: 1 }}>
       <StatusBar style="auto" />
-    </View>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="UdaciCards">
+          <Stack.Screen name="UdaciCards" component={TabNavigation} />
+          <Stack.Screen
+            name="DeckScreen"
+            options={{ title: "Deck" }}
+            component={DeckScreen}
+          />
+          <Stack.Screen
+            name="NewCardScreen"
+            options={{ title: "Add Card" }}
+            component={NewCardScreen}
+          />
+          <Stack.Screen
+            name="QuizScreen"
+            options={{ title: "Quiz" }}
+            component={QuizScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
