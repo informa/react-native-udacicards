@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, Platform, TouchableOpacity } from "react-native";
+import { Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
