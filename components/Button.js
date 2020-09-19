@@ -1,24 +1,35 @@
 import * as React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const Button = ({ children, onPress, style = {} }) => {
+const Button = ({ children, onPress, style = {}, ...props }) => {
   return (
     <TouchableOpacity
-      style={{
-        padding: 10,
-        paddingLeft: 24,
-        paddingRight: 24,
-        backgroundColor: "royalblue",
-        alignSelf: "center",
-        borderRadius: 5,
-        margin: 20,
-        ...style,
-      }}
+      style={[
+        styles.container,
+        props.disabled && { backgroundColor: "lightgray" },
+        { ...style },
+      ]}
       onPress={onPress}
+      {...props}
     >
-      <Text style={{ color: "white", fontSize: 20 }}>{children}</Text>
+      <Text style={styles.text}>{children}</Text>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "royalblue",
+    borderRadius: 5,
+  },
+  text: {
+    color: "white",
+    fontSize: 20,
+    padding: 10,
+    paddingLeft: 24,
+    paddingRight: 24,
+    textAlign: "center",
+  },
+});
 
 export default Button;

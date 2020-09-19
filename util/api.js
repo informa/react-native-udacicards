@@ -6,7 +6,9 @@ import { setDummyData, STORAGE_KEY } from "./helpers";
 export const getDecks = async () => {
   try {
     const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-    return jsonValue != null ? JSON.parse(jsonValue) : setDummyData();
+    return jsonValue !== null || Object.keys(jsonValue).length !== 0
+      ? JSON.parse(jsonValue)
+      : setDummyData();
   } catch (e) {
     // error reading value
     console.log("Error: ", e);
@@ -31,8 +33,20 @@ export const getDeck = ({ id }) => {
 };
 
 //take in a single title argument and add it to the decks.
-export const saveDeckTitle = ({ title }) => {
-  console.log(title);
+// TODO: title needs to be one word and unique
+export const saveDeckTitle = async ({ title }) => {
+  try {
+    const jsonValue = JSON.stringify({
+      [title]: {
+        title,
+        questions: [],
+      },
+    });
+    await AsyncStorage.mergeItem(STORAGE_KEY, jsonValue);
+  } catch (e) {
+    // saving error
+    console.log("Error: ", e);
+  }
 };
 
 // take in two arguments, title and card, and will add the card

@@ -1,12 +1,21 @@
 import * as React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
-const DeckList = ({ title, count }) => {
+const DeckList = ({ title, count, id, ...props }) => {
   return (
-    <View style={styles.deckList}>
+    <TouchableOpacity
+      style={styles.deckList}
+      onPress={() => {
+        props.navigation.navigate("DeckScreen", {
+          deckId: id,
+          deckTitle: title,
+          deckCount: count,
+        });
+      }}
+    >
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.count}>{count} cards</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

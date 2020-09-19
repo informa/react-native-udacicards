@@ -3,14 +3,16 @@ import { connect } from "react-redux";
 import { Text, View, FlatList } from "react-native";
 import { AppLoading } from "expo";
 import { getDecks } from "../util/api";
+import { setDummyData } from "../util/helpers";
 import { receiveDecks } from "../actions";
-import Button from "./Button";
 import DeckList from "./DeckList";
+import Button from "./Button";
 
 class DeckListScreen extends React.Component {
   state = {
     isReady: false,
   };
+
   componentDidMount() {
     const { dispatch } = this.props;
 
@@ -22,7 +24,14 @@ class DeckListScreen extends React.Component {
   }
 
   renderItem = ({ item }) => {
-    return <DeckList {...item} />;
+    return <DeckList navigation={this.props.navigation} {...item} />;
+  };
+
+  // Sets the local storage and the state back to the initial data
+  reset = () => {
+    setDummyData().then((decks) => {
+      dispatch(receiveDecks(decks));
+    });
   };
 
   render() {
@@ -35,19 +44,12 @@ class DeckListScreen extends React.Component {
 
     return (
       <View style={{ flex: 1 }}>
-        {/* <Text style={{ fontSize: 40 }}>Deck List!</Text> */}
-        {/* <Button
-          onPress={() => {
-            navigation.navigate("DeckScreen");
-          }}
-        >
-          Go to deck
-        </Button> */}
         <FlatList
           data={decks}
           renderItem={this.renderItem}
           keyExtractor={(item) => item.title}
         />
+        <Button onPress={() => this.reset()}>RESET DATA</Button>
       </View>
     );
   }
@@ -57,6 +59,7 @@ function mapStateToProps(decks) {
     return {
       title: decks[deck].title,
       count: decks[deck].questions.length,
+      id: deck,
     };
   });
 
