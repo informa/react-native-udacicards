@@ -23,15 +23,15 @@ class DeckListScreen extends React.Component {
       .then(() => this.setState(() => ({ isReady: true })));
   }
 
-  renderItem = ({ item }) => {
-    return <DeckList navigation={this.props.navigation} {...item} />;
-  };
-
   // Sets the local storage and the state back to the initial data
   reset = () => {
     setDummyData().then((decks) => {
       dispatch(receiveDecks(decks));
     });
+  };
+
+  renderItem = ({ item }) => {
+    return <DeckList navigation={this.props.navigation} {...item} />;
   };
 
   render() {
@@ -47,7 +47,7 @@ class DeckListScreen extends React.Component {
         <FlatList
           data={decks}
           renderItem={this.renderItem}
-          keyExtractor={(item) => item.title}
+          keyExtractor={(item) => item.id}
         />
         <Button onPress={() => this.reset()}>RESET DATA</Button>
       </View>
@@ -59,7 +59,7 @@ function mapStateToProps(decks) {
     return {
       title: decks[deck].title,
       count: decks[deck].questions.length,
-      id: deck,
+      id: decks[deck].id,
     };
   });
 

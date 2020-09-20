@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Text, View, Alert, TextInput, StyleSheet } from "react-native";
 import { connect } from "react-redux";
+import shortid from "shortid";
 import { saveDeckTitle } from "../util/api";
 import { addNewDeck } from "../actions";
 import Button from "./Button";
@@ -13,11 +14,13 @@ class NewDeckScreen extends React.Component {
 
   handleSubmit = (text) => {
     const { goBack, addDeck } = this.props;
+    const id = shortid.generate();
 
     if (text !== "") {
       // dispatch
       addDeck({
-        [text]: {
+        [id]: {
+          id,
           title: text,
           questions: [],
         },
@@ -30,7 +33,7 @@ class NewDeckScreen extends React.Component {
       goBack();
 
       // add to local storage
-      saveDeckTitle({ title: text });
+      saveDeckTitle({ id, title: text });
     }
 
     this.showError(text);

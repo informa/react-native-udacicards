@@ -1,35 +1,44 @@
 import * as React from "react";
-import { Text, View, StyleSheet, TextInput } from "react-native";
+import { Text, View, StyleSheet, TextInput, Platform } from "react-native";
 import { connect } from "react-redux";
+import { RadioButton } from "react-native-paper";
 import { addNewCard } from "../actions";
+import { addCardToDeck } from "../util/api";
 import Button from "./Button";
 
 class NewCardScreen extends React.Component {
   state = {
     inputQuestion: "",
     inputAnswer: "",
+    checked: "correct",
   };
 
   handleSubmit = () => {
-    const { inputAnswer, inputQuestion } = this.state;
-    const { goBack, addCard } = this.props;
+    const { inputAnswer, inputQuestion, checked } = this.state;
+    const { goBack, addCard, route } = this.props;
+    const { deckId } = route.params;
 
-    // dispatch
-    addCard({
+    const card = {
       question: inputQuestion,
       answer: inputAnswer,
-    });
+      result: checked,
+    };
+
+    // dispatch
+    addCard(card);
 
     // reset state
     this.setState({
       inputQuestion: "",
       inputAnswer: "",
+      checked: "correct",
     });
 
     // go back
     goBack();
 
     // add to local storage
+    addCardToDeck({ deckId, card });
   };
 
   onChangeInputValue = ({ value, name }) => {
@@ -39,7 +48,7 @@ class NewCardScreen extends React.Component {
   };
 
   render() {
-    const { inputAnswer, inputQuestion } = this.state;
+    const { inputAnswer, inputQuestion, checked } = this.state;
 
     return (
       <View style={styles.container}>
@@ -67,6 +76,35 @@ class NewCardScreen extends React.Component {
             }
             value={inputAnswer}
           />
+
+          <View style={styles.labelContainer}>
+            <Text style={styles.required}>*</Text>
+            <Text style={styles.label}>Is this answer correct?</Text>
+          </View>
+
+          <View style={styles.labelContainer}>
+            <Text style={{ flexBasis: 30, ...styles.label }}>Yes</Text>
+            <View style={styles.radioButton}>
+              <RadioButton
+                color="mediumseagreen"
+                value="correct"
+                status={checked === "correct" ? "checked" : "unchecked"}
+                onPress={() => this.setState({ checked: "correct" })}
+              />
+            </View>
+          </View>
+
+          <View style={styles.labelContainer}>
+            <Text style={{ flexBasis: 30, ...styles.label }}>No</Text>
+            <View style={styles.radioButton}>
+              <RadioButton
+                color="mediumseagreen"
+                value="incorrect"
+                status={checked === "incorrect" ? "checked" : "unchecked"}
+                onPress={() => this.setState({ checked: "incorrect" })}
+              />
+            </View>
+          </View>
         </View>
         <View style={styles.actions}>
           <Button
@@ -80,6 +118,11 @@ class NewCardScreen extends React.Component {
     );
   }
 }
+
+const radioButtonIOS = Platform.OS === "ios" && {
+  backgroundColor: "lightgray",
+  marginBottom: 4,
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -125,6 +168,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     textAlign: "center",
     marginBottom: 12,
+  },
+  radioButton: {
+    ...radioButtonIOS,
+    borderRadius: 100,
+    marginLeft: 8,
   },
 });
 
