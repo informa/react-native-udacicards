@@ -8,56 +8,81 @@ import {
   Animated,
   TouchableOpacity,
   FlatList,
+  Easing,
 } from "react-native";
 import CardFlip from "react-native-card-flip";
 import Button from "./Button";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 
 class QuizScreen extends React.Component {
   constructor(props) {
     super(props);
-    const screenWidth = Dimensions.get("window").width;
-    this.card = [];
+
+    // Get the screen width
+    this.screenWidth = Dimensions.get("window").width;
+    // Quiz position
+    this.quizPosition = 0;
+    // Set initial animation value to right offscreen
+    this.transformX = new Animated.Value(this.screenWidth);
 
     this.state = {
-      screenWidth,
-      transformX: new Animated.Value(0),
-      quizPosition: 0,
-      questions: this.props.questions,
+      quizPosition: this.quizPosition,
+      answers: {},
     };
   }
 
   componentDidMount() {
-    const { transformX, screenWidth } = this.state;
+    //Animate: question comes from offscreen right to center
+    Animated.spring(this.transformX, {
+      toValue: 0,
+      speed: 5,
+      useNativeDriver: true,
+    }).start();
 
-    // Animated.spring(transformX, {
-    //   toValue: -screenWidth,
-    //   speed: 5,
-    //   useNativeDriver: true,
-    // }).start();
+    // Reset Quiz on mount
+    this.resetQuiz();
   }
 
   handleAnswer = ({ answer, questionNumber }) => {
-    const { questions, quizPosition } = this.state;
+    //Animate: move from center of screen to left offscreen
+    Animated.timing(this.transformX, {
+      toValue: -this.screenWidth,
+      easing: Easing.in(),
+      duration: 170,
+      useNativeDriver: true,
+    }).start(() => {
+      //Animate: After animation is finished:
+      // - update the question and quiz position
+      // - set the position of the question the right off screen
+      this.transformX.setValue(this.screenWidth);
 
-    // Handle state, add user answer and increase quiz position by 1
-    this.setState((previousState) => ({
-      questions: previousState.questions.map((question, index) =>
-        index === questionNumber ? { ...question, user: answer } : question
-      ),
-      quizPosition: previousState.quizPosition + 1,
-    }));
-
-    // go to next question
-
-    //
+      this.setState(
+        (previousState) => ({
+          quizPosition: previousState.quizPosition + 1,
+          answers: {
+            ...previousState.answers,
+            [questionNumber]: answer,
+          },
+        }),
+        () => {
+          //Animate: question move from offscreen right to center
+          Animated.spring(this.transformX, {
+            toValue: 0,
+            speed: 5,
+            useNativeDriver: true,
+          }).start(() => {
+            this.transformX.setValue(0);
+          });
+        }
+      );
+    });
   };
 
-  renderItem = ({ item }) => {
-    const { question, answer, result, user } = item;
+  renderItem = ({ item, index }) => {
+    const { answers } = this.state;
+    const { question, answer, result } = item;
     const icon =
-      result === user ? (
+      result === answers[index] ? (
         <AntDesign name="checkcircleo" size={24} color="mediumseagreen" />
       ) : (
         <AntDesign name="closecircleo" size={24} color="crimson" />
@@ -74,31 +99,32 @@ class QuizScreen extends React.Component {
   };
 
   getResults = () => {
-    const { questions } = this.state;
+    const { answers } = this.state;
+    const { questions } = this.props;
 
     let results = 0;
 
-    questions.map((question) => {
-      results = question.result === question.user ? results + 1 : results;
+    questions.map((question, index) => {
+      return question.result === answers[index] ? results++ : results;
     });
 
     return results;
   };
 
-  handleReset = () => {
+  resetQuiz = () => {
     this.setState(() => ({
-      questions: this.props.questions,
-      quizPosition: 0,
+      quizPosition: this.quizPosition,
+      answers: {},
     }));
   };
 
   render() {
-    const { transformX, questions, quizPosition } = this.state;
-    const { total } = this.props;
+    const { quizPosition } = this.state;
+    const { total, questions } = this.props;
+    const quizEnd = quizPosition !== total;
+    const { question, answer } = quizEnd && questions[quizPosition];
 
-    console.log(this.state);
-
-    return quizPosition !== total ? (
+    return quizEnd ? (
       <View style={styles.container}>
         <Text style={styles.position}>
           {quizPosition}/{total}
@@ -106,72 +132,67 @@ class QuizScreen extends React.Component {
         <Animated.View
           style={[
             {
-              transform: [{ translateX: transformX }],
+              transform: [{ translateX: this.transformX }],
               ...styles.animationWrapper,
             },
           ]}
         >
-          {questions.map((item, index) => {
-            const { question, answer } = item;
-            return (
-              <View style={styles.slide} key={question}>
-                <View style={styles.content}>
-                  <CardFlip
-                    style={styles.cardContainer}
-                    ref={(card) => (this.card[index] = card)}
-                  >
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      style={[styles.card, styles.card1]}
-                      onPress={() => this.card[index].flip()}
-                    >
-                      <Text style={styles.cardLabel}>{question}</Text>
-                      <Text style={[styles.cardButton, styles.cardButton1]}>
-                        See possible Answer
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      activeOpacity={1}
-                      style={[styles.card, styles.card2]}
-                      onPress={() => this.card[index].flip()}
-                    >
-                      <Text style={[styles.cardLabel, styles.cardLabel2]}>
-                        {answer}
-                      </Text>
-                      <Text style={styles.cardButton}>See question</Text>
-                    </TouchableOpacity>
-                  </CardFlip>
-                </View>
-                <View style={styles.actions}>
-                  <Button
-                    onPress={() =>
-                      this.handleAnswer({
-                        questionNumber: index,
-                        answer: "correct",
-                      })
-                    }
-                    style={{
-                      ...styles.newCard,
-                      backgroundColor: "mediumseagreen",
-                    }}
-                  >
-                    Correct
-                  </Button>
-                  <Button
-                    onPress={() =>
-                      this.handleAnswer({
-                        questionNumber: index,
-                        answer: "incorrect",
-                      })
-                    }
-                    style={{ backgroundColor: "tomato" }}
-                  >
-                    Incorrect
-                  </Button>
-                </View>
-              </View>
-            );
-          })}
+          <View style={styles.slide} key={question}>
+            <View style={styles.content}>
+              <CardFlip
+                style={styles.cardContainer}
+                ref={(card) => (this.card = card)}
+              >
+                <TouchableOpacity
+                  activeOpacity={1}
+                  style={[styles.card, styles.card1]}
+                  onPress={() => this.card.flip()}
+                >
+                  <Text style={styles.cardLabel}>{question}</Text>
+                  <Text style={[styles.cardButton, styles.cardButton1]}>
+                    See possible Answer
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={1}
+                  style={[styles.card, styles.card2]}
+                  onPress={() => this.card.flip()}
+                >
+                  <Text style={[styles.cardLabel, styles.cardLabel2]}>
+                    {answer}
+                  </Text>
+                  <Text style={styles.cardButton}>See question</Text>
+                </TouchableOpacity>
+              </CardFlip>
+            </View>
+            <View style={styles.actions}>
+              <Button
+                onPress={() =>
+                  this.handleAnswer({
+                    questionNumber: quizPosition,
+                    answer: "correct",
+                  })
+                }
+                style={{
+                  ...styles.newCard,
+                  backgroundColor: "mediumseagreen",
+                }}
+              >
+                Correct
+              </Button>
+              <Button
+                onPress={() =>
+                  this.handleAnswer({
+                    questionNumber: quizPosition,
+                    answer: "incorrect",
+                  })
+                }
+                style={{ backgroundColor: "tomato" }}
+              >
+                Incorrect
+              </Button>
+            </View>
+          </View>
         </Animated.View>
       </View>
     ) : (
@@ -190,7 +211,7 @@ class QuizScreen extends React.Component {
         </View>
         <View style={styles.actions}>
           <Button
-            onPress={this.handleReset}
+            onPress={this.resetQuiz}
             style={{ backgroundColor: "tomato" }}
           >
             Start again
