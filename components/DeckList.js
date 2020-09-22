@@ -1,40 +1,69 @@
 import * as React from "react";
-import { Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  Text,
+  TouchableWithoutFeedback,
+  StyleSheet,
+  Animated,
+} from "react-native";
+import { Card, IconButton } from "react-native-paper";
+import { Entypo } from "@expo/vector-icons";
 
 const DeckList = ({ title, count, id, ...props }) => {
+  const scale = new Animated.Value(1);
+
   return (
-    <TouchableOpacity
-      style={styles.deckList}
-      onPress={() => {
-        props.navigation.navigate("DeckScreen", {
-          deckId: id,
-          deckTitle: title,
-          deckCount: count,
-        });
+    <TouchableWithoutFeedback
+      onPressIn={() => {
+        Animated.spring(scale, {
+          toValue: 0.9,
+          speed: 1,
+          useNativeDriver: true,
+        }).start();
+      }}
+      onPressOut={() => {
+        Animated.spring(scale, {
+          toValue: 1,
+          speed: 50,
+          useNativeDriver: true,
+        }).start();
       }}
     >
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.count}>{count} cards</Text>
-    </TouchableOpacity>
+      <Animated.View
+        style={[
+          {
+            transform: [{ scale }],
+            ...styles.deckList,
+          },
+        ]}
+      >
+        <Card>
+          <Card.Title
+            title={title}
+            subtitle={`${count} cards`}
+            right={() => (
+              <IconButton
+                icon={() => (
+                  <Entypo name="chevron-right" size={24} color="black" />
+                )}
+                onPress={() => {
+                  props.navigation.navigate("DeckScreen", {
+                    deckId: id,
+                    deckTitle: title,
+                    deckCount: count,
+                  });
+                }}
+              />
+            )}
+          />
+        </Card>
+      </Animated.View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   deckList: {
-    alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 24,
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderBottomWidth: 1,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 4,
-  },
-  count: {
-    fontSize: 16,
-    color: "gray",
+    marginTop: 8,
   },
 });
 

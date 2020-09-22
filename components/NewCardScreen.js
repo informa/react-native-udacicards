@@ -1,10 +1,18 @@
 import * as React from "react";
-import { Text, View, StyleSheet, TextInput, Platform } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
 import { connect } from "react-redux";
 import { RadioButton } from "react-native-paper";
 import { addNewCard } from "../actions";
 import { addCardToDeck } from "../util/api";
 import Button from "./Button";
+import { Card, Headline } from "react-native-paper";
 
 class NewCardScreen extends React.Component {
   state = {
@@ -51,61 +59,72 @@ class NewCardScreen extends React.Component {
     const { inputAnswer, inputQuestion, checked } = this.state;
 
     return (
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.title}>Add a new card?</Text>
-          <View style={styles.labelContainer}>
-            <Text style={styles.required}>*</Text>
-            <Text style={styles.label}>Question</Text>
-          </View>
-          <TextInput
-            style={styles.input}
-            onChangeText={(value) =>
-              this.onChangeInputValue({ value, name: "Question" })
-            }
-            value={inputQuestion}
-          />
-          <View style={styles.labelContainer}>
-            <Text style={styles.required}>*</Text>
-            <Text style={styles.label}>Answer</Text>
-          </View>
-          <TextInput
-            style={styles.input}
-            onChangeText={(value) =>
-              this.onChangeInputValue({ value, name: "Answer" })
-            }
-            value={inputAnswer}
-          />
-
-          <View style={styles.labelContainer}>
-            <Text style={styles.required}>*</Text>
-            <Text style={styles.label}>Is this answer correct?</Text>
-          </View>
-
-          <View style={styles.labelContainer}>
-            <Text style={{ flexBasis: 30, ...styles.label }}>Yes</Text>
-            <View style={styles.radioButton}>
-              <RadioButton
-                color="mediumseagreen"
-                value="correct"
-                status={checked === "correct" ? "checked" : "unchecked"}
-                onPress={() => this.setState({ checked: "correct" })}
-              />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <Card
+          style={{
+            flex: 1,
+          }}
+        >
+          <Card.Content style={styles.content}>
+            <Headline style={{ fontSize: 30, marginBottom: 14 }}>
+              Add a new card?
+            </Headline>
+            <View style={styles.labelContainer}>
+              <Text style={styles.required}>*</Text>
+              <Text style={styles.label}>Question</Text>
             </View>
-          </View>
-
-          <View style={styles.labelContainer}>
-            <Text style={{ flexBasis: 30, ...styles.label }}>No</Text>
-            <View style={styles.radioButton}>
-              <RadioButton
-                color="mediumseagreen"
-                value="incorrect"
-                status={checked === "incorrect" ? "checked" : "unchecked"}
-                onPress={() => this.setState({ checked: "incorrect" })}
-              />
+            <TextInput
+              style={styles.input}
+              onChangeText={(value) =>
+                this.onChangeInputValue({ value, name: "Question" })
+              }
+              value={inputQuestion}
+            />
+            <View style={styles.labelContainer}>
+              <Text style={styles.required}>*</Text>
+              <Text style={styles.label}>Answer</Text>
             </View>
-          </View>
-        </View>
+            <TextInput
+              style={styles.input}
+              onChangeText={(value) =>
+                this.onChangeInputValue({ value, name: "Answer" })
+              }
+              value={inputAnswer}
+            />
+
+            <View style={styles.labelContainer}>
+              <Text style={styles.required}>*</Text>
+              <Text style={styles.label}>Is this answer correct?</Text>
+            </View>
+
+            <View style={styles.labelContainer}>
+              <Text style={{ flexBasis: 30, ...styles.label }}>Yes</Text>
+              <View style={styles.radioButton}>
+                <RadioButton
+                  color="mediumseagreen"
+                  value="correct"
+                  status={checked === "correct" ? "checked" : "unchecked"}
+                  onPress={() => this.setState({ checked: "correct" })}
+                />
+              </View>
+            </View>
+
+            <View style={styles.labelContainer}>
+              <Text style={{ flexBasis: 30, ...styles.label }}>No</Text>
+              <View style={styles.radioButton}>
+                <RadioButton
+                  color="mediumseagreen"
+                  value="incorrect"
+                  status={checked === "incorrect" ? "checked" : "unchecked"}
+                  onPress={() => this.setState({ checked: "incorrect" })}
+                />
+              </View>
+            </View>
+          </Card.Content>
+        </Card>
         <View style={styles.actions}>
           <Button
             onPress={() => this.handleSubmit()}
@@ -114,7 +133,7 @@ class NewCardScreen extends React.Component {
             Add new Card
           </Button>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -127,12 +146,14 @@ const radioButtonIOS = Platform.OS === "ios" && {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 10,
   },
   content: {
     flex: 1,
     display: "flex",
     justifyContent: "center",
-    padding: 40,
   },
   labelContainer: {
     flexDirection: "row",
@@ -162,12 +183,6 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     paddingRight: 12,
     marginBottom: 4,
-  },
-  title: {
-    fontSize: 30,
-    marginBottom: 4,
-    textAlign: "center",
-    marginBottom: 12,
   },
   radioButton: {
     ...radioButtonIOS,

@@ -13,6 +13,8 @@ import {
 import CardFlip from "react-native-card-flip";
 import Button from "./Button";
 import { AntDesign } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
+import { Card, Avatar, Paragraph } from "react-native-paper";
 
 class QuizScreen extends React.Component {
   constructor(props) {
@@ -81,20 +83,32 @@ class QuizScreen extends React.Component {
   renderItem = ({ item, index }) => {
     const { answers } = this.state;
     const { question, answer, result } = item;
-    const icon =
-      result === answers[index] ? (
-        <AntDesign name="checkcircleo" size={24} color="mediumseagreen" />
-      ) : (
-        <AntDesign name="closecircleo" size={24} color="crimson" />
-      );
+    const isCorrect = result === answers[index];
+    const color = isCorrect ? "mediumseagreen" : "crimson";
+    const icon = isCorrect ? (
+      <Entypo name="check" size={24} color="white" />
+    ) : (
+      <Entypo name="cross" size={28} color="white" />
+    );
     return (
-      <View style={styles.results}>
-        <View style={styles.resultsContent}>
-          <Text style={styles.resultsQuestion}>{question}</Text>
-          <Text style={styles.resultsAnswer}>{answer}</Text>
-        </View>
-        {icon}
-      </View>
+      <Card style={{ marginTop: 8 }}>
+        <Card.Title
+          style={{ marginBottom: -15 }}
+          title={question}
+          left={() => (
+            <Avatar.Icon
+              size={36}
+              icon={() => icon}
+              style={{
+                backgroundColor: color,
+              }}
+            />
+          )}
+        />
+        <Card.Content style={{ marginLeft: 55 }}>
+          <Paragraph>{answer}</Paragraph>
+        </Card.Content>
+      </Card>
     );
   };
 
@@ -126,8 +140,8 @@ class QuizScreen extends React.Component {
 
     return quizEnd ? (
       <View style={styles.container}>
-        <Text style={styles.position}>
-          {quizPosition}/{total}
+        <Text style={styles.title}>
+          Questions {quizPosition}/{total}
         </Text>
         <Animated.View
           style={[
@@ -145,23 +159,31 @@ class QuizScreen extends React.Component {
               >
                 <TouchableOpacity
                   activeOpacity={1}
-                  style={[styles.card, styles.card1]}
                   onPress={() => this.card.flip()}
+                  style={{ flex: 1 }}
                 >
-                  <Text style={styles.cardLabel}>{question}</Text>
-                  <Text style={[styles.cardButton, styles.cardButton1]}>
-                    See possible Answer
-                  </Text>
+                  <Card style={[styles.card, styles.card1]}>
+                    <View style={styles.cardContent}>
+                      <Text style={styles.cardLabel}>{question}</Text>
+                      <Text style={[styles.cardButton, styles.cardButton1]}>
+                        See possible Answer
+                      </Text>
+                    </View>
+                  </Card>
                 </TouchableOpacity>
                 <TouchableOpacity
                   activeOpacity={1}
-                  style={[styles.card, styles.card2]}
+                  style={{ flex: 1 }}
                   onPress={() => this.card.flip()}
                 >
-                  <Text style={[styles.cardLabel, styles.cardLabel2]}>
-                    {answer}
-                  </Text>
-                  <Text style={styles.cardButton}>See question</Text>
+                  <Card style={[styles.card, styles.card2]}>
+                    <View style={styles.cardContent}>
+                      <Text style={[styles.cardLabel, styles.cardLabel2]}>
+                        {answer}
+                      </Text>
+                      <Text style={styles.cardButton}>See question</Text>
+                    </View>
+                  </Card>
                 </TouchableOpacity>
               </CardFlip>
             </View>
@@ -203,7 +225,7 @@ class QuizScreen extends React.Component {
             renderItem={this.renderItem}
             keyExtractor={(item) => item.question}
             ListHeaderComponent={
-              <Text>
+              <Text style={styles.title}>
                 Results: {this.getResults()} of {total} correct.
               </Text>
             }
@@ -212,7 +234,7 @@ class QuizScreen extends React.Component {
         <View style={styles.actions}>
           <Button
             onPress={this.resetQuiz}
-            style={{ backgroundColor: "tomato" }}
+            style={{ backgroundColor: "mediumseagreen" }}
           >
             Start again
           </Button>
@@ -242,6 +264,8 @@ const styles = StyleSheet.create({
   actions: {
     flex: 0,
     padding: 40,
+    marginLeft: 30,
+    marginRight: 30,
   },
   newCard: {
     marginBottom: 10,
@@ -261,20 +285,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
-    marginLeft: 40,
-    marginRight: 40,
-    marginTop: 20,
+    marginLeft: 30,
+    marginRight: 30,
     padding: 30,
+    flex: 1,
+  },
+  cardContent: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 5,
-    shadowColor: "rgba(0,0,0,0.5)",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.5,
   },
   card1: {
     backgroundColor: "white",
@@ -303,11 +322,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  resultsContainer: { flex: 1 },
-  results: { flexDirection: "row", margin: 10 },
-  resultsContent: { flex: 1 },
-  resultsQuestion: { fontSize: 18 },
-  resultsAnswer: { fontSize: 16 },
+  resultsContainer: {
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  title: {
+    fontSize: 16,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    textAlign: "center",
+    paddingTop: 14,
+    marginBottom: 8,
+  },
 });
 
 const mapStateToProps = (state, { route }) => {

@@ -1,10 +1,19 @@
 import * as React from "react";
-import { Text, View, Alert, TextInput, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  Alert,
+  TextInput,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { connect } from "react-redux";
 import shortid from "shortid";
 import { saveDeckTitle } from "../util/api";
 import { addNewDeck } from "../actions";
 import Button from "./Button";
+import { Card, Headline } from "react-native-paper";
 
 class NewDeckScreen extends React.Component {
   state = {
@@ -62,23 +71,35 @@ class NewDeckScreen extends React.Component {
     const { inputError, inputValue } = this.state;
 
     return (
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <Text style={styles.title}>What is the title of your new deck?</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={(text) => this.onChangeInputValue(text)}
-            value={inputValue}
-            onSubmitEditing={({ nativeEvent: { text } }) => {
-              this.handleSubmit(text);
-            }}
-          />
-          {inputError && (
-            <Text style={styles.error}>
-              Ooops, please add a title for the new deck.
-            </Text>
-          )}
-        </View>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <Card
+          style={{
+            flex: 1,
+          }}
+        >
+          <Card.Content style={styles.content}>
+            <Headline style={{ fontSize: 30, marginBottom: 14 }}>
+              What is the title of your new deck?
+            </Headline>
+
+            <TextInput
+              style={styles.input}
+              onChangeText={(text) => this.onChangeInputValue(text)}
+              value={inputValue}
+              onSubmitEditing={({ nativeEvent: { text } }) => {
+                this.handleSubmit(text);
+              }}
+            />
+            {inputError && (
+              <Text style={styles.error}>
+                Ooops, please add a title for the new deck.
+              </Text>
+            )}
+          </Card.Content>
+        </Card>
         <View style={styles.actions}>
           <Button
             onPress={() => this.handleSubmit(inputValue)}
@@ -87,7 +108,7 @@ class NewDeckScreen extends React.Component {
             Add new Deck
           </Button>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -95,12 +116,14 @@ class NewDeckScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 10,
   },
   content: {
     flex: 1,
     display: "flex",
     justifyContent: "center",
-    padding: 40,
   },
   error: {
     color: "crimson",

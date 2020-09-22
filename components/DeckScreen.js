@@ -2,25 +2,48 @@ import * as React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import Button from "./Button";
+import {
+  Card,
+  Avatar,
+  Paragraph,
+  Caption,
+  Headline,
+  Button as ButtonPaper,
+} from "react-native-paper";
 
 const DeckScreen = ({ navigation, title, count, id }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.count}>{count} Cards</Text>
-      </View>
-      <View style={styles.actions}>
-        <Button
-          onPress={() => {
-            navigation.navigate("NewCardScreen", {
-              deckId: id,
-            });
+      <Card style={styles.content}>
+        <Card.Content
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
-          style={{ ...styles.newCard }}
         >
-          Add new card
-        </Button>
+          <Headline style={{ fontSize: 30 }}>{title}</Headline>
+        </Card.Content>
+        <Card.Actions
+          style={{
+            justifyContent: "space-between",
+          }}
+        >
+          <ButtonPaper
+            color="royalblue"
+            onPress={() => {
+              navigation.navigate("NewCardScreen", {
+                deckId: id,
+              });
+            }}
+          >
+            Add new card
+          </ButtonPaper>
+          <Caption style={{ fontSize: 16 }}>{count} Cards</Caption>
+        </Card.Actions>
+      </Card>
+      <View style={styles.actions}>
         <Button
           onPress={() => {
             navigation.navigate("QuizScreen", {
@@ -38,12 +61,12 @@ const DeckScreen = ({ navigation, title, count, id }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingLeft: 30,
+    paddingRight: 30,
+    paddingTop: 10,
   },
   content: {
     flex: 1,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
   },
   actions: {
     flex: 0,

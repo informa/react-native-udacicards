@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Text, View, FlatList } from "react-native";
+import { Text, View, FlatList, StyleSheet } from "react-native";
 import { AppLoading } from "expo";
 import { getDecks } from "../util/api";
 import { setDummyData } from "../util/helpers";
@@ -43,7 +43,7 @@ class DeckListScreen extends React.Component {
     }
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <FlatList
           data={decks}
           renderItem={this.renderItem}
@@ -67,5 +67,13 @@ function mapStateToProps(decks) {
     decks: deckList,
   };
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+});
 
 export default connect(mapStateToProps)(DeckListScreen);
