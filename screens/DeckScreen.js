@@ -1,35 +1,24 @@
 import * as React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
-import Button from "./Button";
+import Button from "../components/Button";
 import {
   Card,
-  Avatar,
-  Paragraph,
   Caption,
   Headline,
   Button as ButtonPaper,
 } from "react-native-paper";
 
 const DeckScreen = ({ navigation, title, count, id }) => {
+  const hasCards = count > 0;
   return (
     <View style={styles.container}>
-      <Card style={styles.content}>
-        <Card.Content
-          style={{
-            flex: 1,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Headline style={{ fontSize: 30 }}>{title}</Headline>
-        </Card.Content>
-        <Card.Actions
-          style={{
-            justifyContent: "space-between",
-          }}
-        >
+      <Card style={{ flex: 1 }}>
+        <Card.Content style={styles.content}>
+          <Headline style={{ fontSize: 30, marginBottom: 10 }}>
+            {title}
+          </Headline>
+          <Caption style={{ fontSize: 16 }}>{count} Cards</Caption>
           <ButtonPaper
             color="royalblue"
             onPress={() => {
@@ -40,20 +29,21 @@ const DeckScreen = ({ navigation, title, count, id }) => {
           >
             Add new card
           </ButtonPaper>
-          <Caption style={{ fontSize: 16 }}>{count} Cards</Caption>
-        </Card.Actions>
+        </Card.Content>
       </Card>
-      <View style={styles.actions}>
-        <Button
-          onPress={() => {
-            navigation.navigate("QuizScreen", {
-              deckId: id,
-            });
-          }}
-        >
-          Start Quiz
-        </Button>
-      </View>
+      {hasCards && (
+        <View style={styles.actions}>
+          <Button
+            onPress={() => {
+              navigation.navigate("QuizScreen", {
+                deckId: id,
+              });
+            }}
+          >
+            Start Quiz
+          </Button>
+        </View>
+      )}
     </View>
   );
 };
@@ -64,25 +54,17 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     paddingRight: 30,
     paddingTop: 10,
+    paddingBottom: 10,
   },
   content: {
     flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   actions: {
     flex: 0,
     padding: 40,
-  },
-  newCard: {
-    marginBottom: 10,
-    backgroundColor: "tomato",
-  },
-  title: {
-    fontSize: 30,
-    marginBottom: 4,
-  },
-  count: {
-    fontSize: 18,
-    color: "gray",
   },
 });
 

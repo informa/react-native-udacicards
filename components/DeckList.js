@@ -1,14 +1,9 @@
 import * as React from "react";
-import {
-  Text,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Animated,
-} from "react-native";
+import { TouchableWithoutFeedback, StyleSheet, Animated } from "react-native";
 import { Card, IconButton } from "react-native-paper";
 import { Entypo } from "@expo/vector-icons";
 
-const DeckList = ({ title, count, id, ...props }) => {
+const DeckList = ({ title, count, id, screen, ...props }) => {
   const scale = new Animated.Value(1);
 
   return (
@@ -46,7 +41,7 @@ const DeckList = ({ title, count, id, ...props }) => {
                   <Entypo name="chevron-right" size={24} color="black" />
                 )}
                 onPress={() => {
-                  props.navigation.navigate("DeckScreen", {
+                  props.navigation.navigate(screen, {
                     deckId: id,
                     deckTitle: title,
                     deckCount: count,

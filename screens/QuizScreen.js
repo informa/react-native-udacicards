@@ -11,10 +11,18 @@ import {
   Easing,
 } from "react-native";
 import CardFlip from "react-native-card-flip";
-import Button from "./Button";
-import { AntDesign } from "@expo/vector-icons";
+import Button from "../components/Button";
 import { Entypo } from "@expo/vector-icons";
-import { Card, Avatar, Paragraph } from "react-native-paper";
+import {
+  Card,
+  Avatar,
+  Paragraph,
+  Button as ButtonPaper,
+} from "react-native-paper";
+import colors from "../util/colors";
+import Result from "../components/Result";
+import ResultList from "../components/ResultList";
+import TouchableCard from "../components/TouchableCard";
 
 class QuizScreen extends React.Component {
   constructor(props) {
@@ -84,31 +92,14 @@ class QuizScreen extends React.Component {
     const { answers } = this.state;
     const { question, answer, result } = item;
     const isCorrect = result === answers[index];
-    const color = isCorrect ? "mediumseagreen" : "crimson";
+    const color = isCorrect ? colors.green : colors.error;
     const icon = isCorrect ? (
       <Entypo name="check" size={24} color="white" />
     ) : (
       <Entypo name="cross" size={28} color="white" />
     );
     return (
-      <Card style={{ marginTop: 8 }}>
-        <Card.Title
-          style={{ marginBottom: -15 }}
-          title={question}
-          left={() => (
-            <Avatar.Icon
-              size={36}
-              icon={() => icon}
-              style={{
-                backgroundColor: color,
-              }}
-            />
-          )}
-        />
-        <Card.Content style={{ marginLeft: 55 }}>
-          <Paragraph>{answer}</Paragraph>
-        </Card.Content>
-      </Card>
+      <Result icon={icon} answer={answer} question={question} color={color} />
     );
   };
 
@@ -157,34 +148,18 @@ class QuizScreen extends React.Component {
                 style={styles.cardContainer}
                 ref={(card) => (this.card = card)}
               >
-                <TouchableOpacity
-                  activeOpacity={1}
+                <TouchableCard
                   onPress={() => this.card.flip()}
-                  style={{ flex: 1 }}
-                >
-                  <Card style={[styles.card, styles.card1]}>
-                    <View style={styles.cardContent}>
-                      <Text style={styles.cardLabel}>{question}</Text>
-                      <Text style={[styles.cardButton, styles.cardButton1]}>
-                        See possible Answer
-                      </Text>
-                    </View>
-                  </Card>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  activeOpacity={1}
-                  style={{ flex: 1 }}
+                  front
+                  label={question}
+                  buttonText="See possible Answer"
+                />
+                <TouchableCard
                   onPress={() => this.card.flip()}
-                >
-                  <Card style={[styles.card, styles.card2]}>
-                    <View style={styles.cardContent}>
-                      <Text style={[styles.cardLabel, styles.cardLabel2]}>
-                        {answer}
-                      </Text>
-                      <Text style={styles.cardButton}>See question</Text>
-                    </View>
-                  </Card>
-                </TouchableOpacity>
+                  back
+                  label={answer}
+                  buttonText="See question"
+                />
               </CardFlip>
             </View>
             <View style={styles.actions}>
@@ -197,7 +172,7 @@ class QuizScreen extends React.Component {
                 }
                 style={{
                   ...styles.newCard,
-                  backgroundColor: "mediumseagreen",
+                  backgroundColor: colors.green,
                 }}
               >
                 Correct
@@ -209,7 +184,7 @@ class QuizScreen extends React.Component {
                     answer: "incorrect",
                   })
                 }
-                style={{ backgroundColor: "tomato" }}
+                style={{ backgroundColor: colors.red }}
               >
                 Incorrect
               </Button>
@@ -218,28 +193,13 @@ class QuizScreen extends React.Component {
         </Animated.View>
       </View>
     ) : (
-      <View style={styles.container}>
-        <View style={styles.resultsContainer}>
-          <FlatList
-            data={questions}
-            renderItem={this.renderItem}
-            keyExtractor={(item) => item.question}
-            ListHeaderComponent={
-              <Text style={styles.title}>
-                Results: {this.getResults()} of {total} correct.
-              </Text>
-            }
-          />
-        </View>
-        <View style={styles.actions}>
-          <Button
-            onPress={this.resetQuiz}
-            style={{ backgroundColor: "mediumseagreen" }}
-          >
-            Start again
-          </Button>
-        </View>
-      </View>
+      <ResultList
+        data={questions}
+        renderItem={this.renderItem}
+        keyExtractor={(item) => item.question}
+        header={`Results: ${this.getResults()} of ${total} correct.`}
+        onPress={this.resetQuiz}
+      />
     );
   }
 }
@@ -269,63 +229,10 @@ const styles = StyleSheet.create({
   },
   newCard: {
     marginBottom: 10,
-    backgroundColor: "tomato",
-  },
-  question: {
-    fontSize: 30,
-    marginBottom: 4,
-    textAlign: "center",
-  },
-  answer: {
-    fontSize: 18,
-    color: "crimson",
   },
   cardContainer: {
     width: "100%",
     flex: 1,
-  },
-  card: {
-    marginLeft: 30,
-    marginRight: 30,
-    padding: 30,
-    flex: 1,
-  },
-  cardContent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  card1: {
-    backgroundColor: "white",
-  },
-  card2: {
-    backgroundColor: "deepskyblue",
-    color: "#ffffff",
-  },
-  cardLabel2: {
-    color: "#ffffff",
-  },
-  cardButton: {
-    fontSize: 16,
-  },
-  cardButton1: {
-    color: "dodgerblue",
-  },
-  cardLabel: {
-    marginBottom: 12,
-    textAlign: "center",
-    fontSize: 24,
-  },
-  position: {
-    textAlign: "center",
-    paddingTop: 8,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  resultsContainer: {
-    flex: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
   },
   title: {
     fontSize: 16,

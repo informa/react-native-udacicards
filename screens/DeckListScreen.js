@@ -5,8 +5,8 @@ import { AppLoading } from "expo";
 import { getDecks } from "../util/api";
 import { setDummyData } from "../util/helpers";
 import { receiveDecks } from "../actions";
-import DeckList from "./DeckList";
-import Button from "./Button";
+import DeckList from "../components/DeckList";
+import Button from "../components/Button";
 
 class DeckListScreen extends React.Component {
   state = {
@@ -31,11 +31,17 @@ class DeckListScreen extends React.Component {
   };
 
   renderItem = ({ item }) => {
-    return <DeckList navigation={this.props.navigation} {...item} />;
+    return (
+      <DeckList
+        navigation={this.props.navigation}
+        screen="DeckScreen"
+        {...item}
+      />
+    );
   };
 
   render() {
-    const { navigation, decks } = this.props;
+    const { decks } = this.props;
     const { isReady } = this.state;
 
     if (!isReady) {
