@@ -4,6 +4,8 @@ This is mobile application for Android and iOS that allows users to study collec
 
 This app was built with [Expo](https://docs.expo.io/get-started/create-a-new-app/).
 
+![UdaciCards](docs/static/udaciCards-app.png)
+
 ### Simulators
 
 To view this app you can use IOS and Android simulators:
