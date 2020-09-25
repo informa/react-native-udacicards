@@ -9,7 +9,7 @@ import { Card, Button, TextInput, Title } from "react-native-paper";
 
 class NewDeckScreen extends React.Component {
   state = {
-    inputValue: undefined,
+    inputValue: "",
     inputError: false,
   };
 
@@ -72,9 +72,6 @@ class NewDeckScreen extends React.Component {
           <TextInput
             onChangeText={(text) => this.onChangeInputValue(text)}
             value={inputValue}
-            onSubmitEditing={({ nativeEvent: { text } }) => {
-              this.handleSubmit(text);
-            }}
             label="New Deck"
             mode="outlined"
             multiline

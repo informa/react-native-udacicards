@@ -12,6 +12,7 @@ import NewCardScreen from "./screens/NewCardScreen";
 import QuizScreen from "./screens/QuizScreen";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import colors from "./util/colors";
+import { setLocalNotification } from "./util/helpers";
 
 const Stack = createStackNavigator();
 
@@ -21,38 +22,43 @@ const theme = {
   colors: {
     ...DefaultTheme.colors,
     primary: colors.blue,
-    // accent: "#f1c40f",
   },
 };
 
-export default function App() {
-  return (
-    <Provider store={createStore(reducer)}>
-      <PaperProvider theme={theme}>
-        <SafeAreaView style={{ flex: 1 }}>
-          <StatusBar style="auto" />
-          <NavigationContainer>
-            <Stack.Navigator initialRouteName="UdaciCards">
-              <Stack.Screen name="UdaciCards" component={TabNavigation} />
-              <Stack.Screen
-                name="DeckScreen"
-                options={{ title: "Deck" }}
-                component={DeckScreen}
-              />
-              <Stack.Screen
-                name="NewCardScreen"
-                options={{ title: "Add Card" }}
-                component={NewCardScreen}
-              />
-              <Stack.Screen
-                name="QuizScreen"
-                options={{ title: "Quiz" }}
-                component={QuizScreen}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </SafeAreaView>
-      </PaperProvider>
-    </Provider>
-  );
+export default class App extends React.Component {
+  componentDidMount() {
+    setLocalNotification();
+  }
+
+  render() {
+    return (
+      <Provider store={createStore(reducer)}>
+        <PaperProvider theme={theme}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <StatusBar style="auto" />
+            <NavigationContainer>
+              <Stack.Navigator initialRouteName="UdaciCards">
+                <Stack.Screen name="UdaciCards" component={TabNavigation} />
+                <Stack.Screen
+                  name="DeckScreen"
+                  options={{ title: "Deck" }}
+                  component={DeckScreen}
+                />
+                <Stack.Screen
+                  name="NewCardScreen"
+                  options={{ title: "Add Card" }}
+                  component={NewCardScreen}
+                />
+                <Stack.Screen
+                  name="QuizScreen"
+                  options={{ title: "Quiz" }}
+                  component={QuizScreen}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </SafeAreaView>
+        </PaperProvider>
+      </Provider>
+    );
+  }
 }

@@ -6,19 +6,11 @@ import {
   StyleSheet,
   Dimensions,
   Animated,
-  TouchableOpacity,
-  FlatList,
   Easing,
 } from "react-native";
 import CardFlip from "react-native-card-flip";
 import Button from "../components/Button";
 import { Entypo } from "@expo/vector-icons";
-import {
-  Card,
-  Avatar,
-  Paragraph,
-  Button as ButtonPaper,
-} from "react-native-paper";
 import colors from "../util/colors";
 import Result from "../components/Result";
 import ResultList from "../components/ResultList";

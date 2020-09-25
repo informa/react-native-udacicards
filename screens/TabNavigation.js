@@ -9,7 +9,7 @@ import NewDeckScreen from "./NewDeckScreen";
 const ios = Platform.OS === "ios";
 const Tab = ios ? createBottomTabNavigator() : createMaterialTopTabNavigator();
 
-const TabNavigation = ({ navigation }) => {
+const TabNavigation = () => {
   const iosTabStyle = ios && {
     tabStyle: {
       height: 50,

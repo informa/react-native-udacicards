@@ -8,8 +8,18 @@ import {
   Headline,
   Button as ButtonPaper,
 } from "react-native-paper";
+import { setLocalNotification, clearLocalNotification } from "../util/helpers";
 
 const DeckScreen = ({ navigation, title, count, id }) => {
+  const handleQuizActivity = () => {
+    // When starting a quiz, clear and set notification for tomorrow a 8pm
+    clearLocalNotification().then(setLocalNotification);
+
+    navigation.navigate("QuizScreen", {
+      deckId: id,
+    });
+  };
+
   const hasCards = count > 0;
   return (
     <View style={styles.container}>
@@ -33,15 +43,7 @@ const DeckScreen = ({ navigation, title, count, id }) => {
       </Card>
       {hasCards && (
         <View style={styles.actions}>
-          <Button
-            onPress={() => {
-              navigation.navigate("QuizScreen", {
-                deckId: id,
-              });
-            }}
-          >
-            Start Quiz
-          </Button>
+          <Button onPress={() => handleQuizActivity()}>Start Quiz</Button>
         </View>
       )}
     </View>
