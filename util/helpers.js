@@ -33,7 +33,7 @@ export const clearLocalNotification = async () => {
 export const setLocalNotification = async () => {
   try {
     const jsonValue = await AsyncStorage.getItem(NOTIFICATION_KEY);
-    const data = jsonValue != null ? JSON.parse(jsonValue) : null;
+    const data = jsonValue !== null ? JSON.parse(jsonValue) : null;
 
     if (data === null) {
       const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
