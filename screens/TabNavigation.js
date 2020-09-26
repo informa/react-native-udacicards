@@ -2,7 +2,7 @@ import React from "react";
 import { Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import DeckListScreen from "./DeckListScreen";
 import NewDeckScreen from "./NewDeckScreen";
 
@@ -55,7 +55,7 @@ const TabNavigation = () => {
       component: DeckListScreen,
       options: {
         tabBarIcon: ({ color }) => (
-          <Ionicons name="ios-bookmarks" size={30} color={color} />
+          <MaterialCommunityIcons name="cards" size={30} color={color} />
         ),
       },
     },
@@ -64,7 +64,7 @@ const TabNavigation = () => {
       name: "New deck",
       options: {
         tabBarIcon: ({ color }) => (
-          <FontAwesome name="plus-square" size={30} color={color} />
+          <MaterialIcons name="note-add" size={30} color={color} />
         ),
       },
     },

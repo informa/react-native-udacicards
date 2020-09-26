@@ -1,10 +1,10 @@
 import * as React from "react";
 import {
-  Text,
   View,
   StyleSheet,
   Platform,
   KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import { connect } from "react-redux";
 import { RadioButton } from "react-native-paper";
@@ -22,7 +22,7 @@ class NewCardScreen extends React.Component {
 
   handleSubmit = () => {
     const { inputAnswer, inputQuestion, checked } = this.state;
-    const { goBack, addCard, route } = this.props;
+    const { addCard, route } = this.props;
     const { deckId } = route.params;
 
     const card = {
@@ -34,6 +34,15 @@ class NewCardScreen extends React.Component {
     // dispatch
     addCard(card);
 
+    // add to local storage
+    addCardToDeck({ deckId, card });
+
+    this.reset();
+  };
+
+  reset = () => {
+    const { goBack } = this.props;
+
     // reset state
     this.setState({
       inputQuestion: "",
@@ -44,8 +53,7 @@ class NewCardScreen extends React.Component {
     // go back
     goBack();
 
-    // add to local storage
-    addCardToDeck({ deckId, card });
+    Keyboard.dismiss();
   };
 
   onChangeInputValue = ({ value, name }) => {
@@ -118,6 +126,9 @@ class NewCardScreen extends React.Component {
             disabled={(!inputQuestion || !inputAnswer) && true}
           >
             Add new Card
+          </Button>
+          <Button onPress={() => this.reset()} color="#666666">
+            Cancel
           </Button>
         </Card.Actions>
       </KeyboardAvoidingView>

@@ -188,7 +188,7 @@ class QuizScreen extends React.Component {
       <ResultList
         data={questions}
         renderItem={this.renderItem}
-        keyExtractor={(item) => item.question}
+        keyExtractor={(item, index) => `${index}_${item.question}`}
         header={`Results: ${this.getResults()} of ${total} correct.`}
         onPress={this.resetQuiz}
       />

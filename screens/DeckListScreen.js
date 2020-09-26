@@ -1,14 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { Text, View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import { AppLoading } from "expo";
 import { getDecks } from "../util/api";
-import { setDummyData } from "../util/helpers";
 import { receiveDecks } from "../actions";
 import DeckList from "../components/DeckList";
-import Button from "../components/Button";
-import AsyncStorage from "@react-native-community/async-storage";
-import { NOTIFICATION_KEY, clearLocalNotification } from "../util/helpers";
 
 class DeckListScreen extends React.Component {
   state = {
@@ -24,34 +20,6 @@ class DeckListScreen extends React.Component {
       })
       .then(() => this.setState(() => ({ isReady: true })));
   }
-
-  getNotificationsKeyPlease = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem(NOTIFICATION_KEY);
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-      // read error
-    }
-
-    console.log("Done. setLocalNotification");
-  };
-
-  // Sets the local storage and the state back to the initial data
-  reset = () => {
-    setDummyData().then((decks) => {
-      dispatch(receiveDecks(decks));
-    });
-  };
-
-  checkNotification = () => {
-    this.getNotificationsKeyPlease().then((balls) => {
-      console.log("getNotificationsKeyPlease ", balls);
-    });
-  };
-
-  clearNotification = () => {
-    clearLocalNotification();
-  };
 
   renderItem = ({ item }) => {
     return (
@@ -78,13 +46,6 @@ class DeckListScreen extends React.Component {
           renderItem={this.renderItem}
           keyExtractor={(item) => item.id}
         />
-        <Button onPress={() => this.clearNotification()}>
-          Clear notification
-        </Button>
-        <Button onPress={() => this.checkNotification()}>
-          Check notification
-        </Button>
-        <Button onPress={() => this.reset()}>RESET DATA</Button>
       </View>
     );
   }

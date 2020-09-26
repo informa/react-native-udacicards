@@ -4,7 +4,7 @@ import { setDummyData, STORAGE_KEY } from "./helpers";
 export const getDecks = async () => {
   try {
     const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-    return jsonValue === null || Object.keys(jsonValue).length !== 0
+    return jsonValue === null || Object.keys(jsonValue).length === 0
       ? setDummyData()
       : JSON.parse(jsonValue);
   } catch (e) {

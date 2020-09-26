@@ -1,5 +1,11 @@
 import * as React from "react";
-import { Text, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+} from "react-native";
 import { connect } from "react-redux";
 import shortid from "shortid";
 import { saveDeckTitle } from "../util/api";
@@ -14,7 +20,7 @@ class NewDeckScreen extends React.Component {
   };
 
   handleSubmit = (text) => {
-    const { goBack, addDeck } = this.props;
+    const { addDeck } = this.props;
     const id = shortid.generate();
 
     if (text !== "") {
@@ -27,17 +33,26 @@ class NewDeckScreen extends React.Component {
         },
       });
 
-      // reset state
-      this.setState({ inputValue: "", inputError: false });
-
-      // go to home
-      goBack();
-
       // add to local storage
       saveDeckTitle({ id, title: text });
+
+      // Reset state, goBack, hide keyboard
+      this.reset();
     }
 
     this.showError(text);
+  };
+
+  reset = () => {
+    const { goBack } = this.props;
+
+    // reset state
+    this.setState({ inputValue: "", inputError: false });
+
+    // go to home
+    goBack();
+
+    Keyboard.dismiss();
   };
 
   onChangeInputValue = (text) => {
@@ -90,6 +105,9 @@ class NewDeckScreen extends React.Component {
             disabled={!inputValue && true}
           >
             Add new Deck
+          </Button>
+          <Button onPress={() => this.reset()} color="#666666">
+            Cancel
           </Button>
         </Card.Actions>
       </KeyboardAvoidingView>
